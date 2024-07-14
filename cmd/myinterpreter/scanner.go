@@ -179,6 +179,12 @@ func (self *Scanner) scanToken() {
 		self.addToken(SEMICOLON)
 	case '*':
 		self.addToken(STAR)
+	case '!':
+		if self.matchCurrentChar('=') {
+			self.addToken(BANG_EQUAL)
+		} else {
+			self.addToken(BANG)
+		}
 	case '=':
 		if self.matchCurrentChar('=') {
 			self.addToken(EQUAL_EQUAL)
