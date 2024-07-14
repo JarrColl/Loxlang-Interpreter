@@ -25,6 +25,10 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Unknown command: %s\n", command)
 		os.Exit(1)
 	}
+
+	if had_error {
+		os.Exit(65)
+	}
 }
 
 func report_error(line int, message string) {
