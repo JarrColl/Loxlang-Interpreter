@@ -16,13 +16,15 @@ func main() {
 
 	command := os.Args[1]
 
-	if command != "tokenize" {
+	if command == "tokenize" {
+		cmd_tokenise()
+	} else {
 		fmt.Fprintf(os.Stderr, "Unknown command: %s\n", command)
 		os.Exit(1)
 	}
+}
 
-	// Uncomment this block to pass the first stage
-
+func cmd_tokenise() {
 	filename := os.Args[2]
 	fileContents, err := os.ReadFile(filename)
 	if err != nil {
@@ -31,7 +33,13 @@ func main() {
 	}
 
 	if len(fileContents) > 0 {
-		panic("Scanner not implemented")
+		scanner := NewScanner(string(fileContents))
+
+		scanner.ScanTokens()
+
+		for _, token := range scanner.tokens {
+			fmt.Println(token.toString())
+		}
 	} else {
 		fmt.Println("EOF  null") // Placeholder, remove this line when implementing the scanner
 	}
