@@ -155,6 +155,12 @@ func (self *Scanner) matchCurrentChar(expected byte) bool {
 	return true
 }
 
+func (self *Scanner) peek() byte {
+	if self.isAtEnd() {return 0}
+	return self.source[self.current]
+
+}
+
 func (self *Scanner) scanToken() {
 	var c byte = self.advance()
 
@@ -202,6 +208,14 @@ func (self *Scanner) scanToken() {
 			self.addToken(GREATER_EQUAL)
 		} else {
 			self.addToken(GREATER)
+		}
+	case '/':
+		if self.matchCurrentChar('/') {
+			for self.peek() != '\n' && !self.isAtEnd() {
+				self.advance()
+			}
+		} else {
+			self.addToken(SLASH)
 		}
 
 	default:
