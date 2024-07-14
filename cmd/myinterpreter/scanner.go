@@ -9,12 +9,12 @@ const (
 	LEFT_BRACE
 	RIGHT_BRACE
 	COMMA
-	PERIOD
+	DOT
 	MINUS
 	PLUS
 	SEMICOLON
 	SLASH
-	ASTERISK
+	STAR
 
 	// One or two character tokens.
 	BANG
@@ -59,12 +59,12 @@ var x = [39]string{
 	"LEFT_BRACE",
 	"RIGHT_BRACE",
 	"COMMA",
-	"PERIOD",
+	"DOT",
 	"MINUS",
 	"PLUS",
 	"SEMICOLON",
 	"SLASH",
-	"ASTERISK",
+	"STAR",
 	// One or two character tokens.
 	"BANG",
 	"BANG_EQUAL",
@@ -162,7 +162,7 @@ func (self *Scanner) scanToken() {
 	case ',':
 		self.addToken(COMMA)
 	case '.':
-		self.addToken(PERIOD)
+		self.addToken(DOT)
 	case '-':
 		self.addToken(MINUS)
 	case '+':
@@ -170,7 +170,7 @@ func (self *Scanner) scanToken() {
 	case ';':
 		self.addToken(SEMICOLON)
 	case '*':
-		self.addToken(ASTERISK)
+		self.addToken(STAR)
 	default:
 		// TODO: lex.error
 	}
