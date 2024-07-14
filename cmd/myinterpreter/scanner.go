@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type TokenType = int8
 
 const (
@@ -105,12 +107,12 @@ func TokenTypeToString(token_type TokenType) string {
 type Token struct {
 	token_type TokenType
 	lexeme     string
-	literal    string
+	literal    any
 	line       int
 }
 
 func (self *Token) toString() string {
-	return TokenTypeToString(self.token_type) + " " + self.lexeme + " " + self.literal
+	return TokenTypeToString(self.token_type) + " " + self.lexeme + fmt.Sprintf(" %v", self.literal)
 }
 
 type Scanner struct {
@@ -139,24 +141,30 @@ func (self *Scanner) advance() byte {
 }
 
 func (self *Scanner) addToken(t TokenType) {
-	self.addTokenWithLexeme(t, "null")
+	self.addTokenWithLiteral(t, "null")
 }
 
-func (self *Scanner) addTokenWithLexeme(t TokenType, lexeme string) {
+func (self *Scanner) addTokenWithLiteral(t TokenType, literal any) {
 	var text string = self.source[self.start:self.current]
-	self.tokens = append(self.tokens, Token{t, text, lexeme, self.line})
+	self.tokens = append(self.tokens, Token{t, text, literal, self.line})
 }
 
 func (self *Scanner) matchCurrentChar(expected byte) bool {
-	if self.isAtEnd() {return false}
-	if self.source[self.current] != expected {return false}
+	if self.isAtEnd() {
+		return false
+	}
+	if self.source[self.current] != expected {
+		return false
+	}
 
 	self.incrementCurrent()
 	return true
 }
 
-func (self *Scanner) peek() byte {
-	if self.isAtEnd() {return 0}
+func (self *Scanner) peekCurrent() byte {
+	if self.isAtEnd() {
+		return 0
+	}
 	return self.source[self.current]
 
 }
@@ -211,7 +219,7 @@ func (self *Scanner) scanToken() {
 		}
 	case '/':
 		if self.matchCurrentChar('/') {
-			for self.peek() != '\n' && !self.isAtEnd() {
+			for self.peekCurrent() != '\n' && !self.isAtEnd() {
 				self.advance()
 			}
 		} else {
@@ -222,11 +230,30 @@ func (self *Scanner) scanToken() {
 	case '\r':
 	case '\n':
 		self.line++
-
+	case '"':
+		self.stringFunc()
 	default:
-		report_error(self.line, "Unexpected character: " + string(c))
-		// TODO: lex.error
+		report_error(self.line, "Unexpected character: "+string(c))
 	}
+}
+
+func (self *Scanner) stringFunc() {
+	// Set start to the first "
+	self.start = self.current - 1
+	for self.peekCurrent() != '"' && !self.isAtEnd() {
+		self.advance()
+	}
+
+	if self.isAtEnd() {
+		report_error(self.line, "Unterminated string.")
+		return
+	}
+
+	self.advance()
+
+	var str_value string = self.source[self.start+1 : self.current - 1]
+	self.addTokenWithLiteral(STRING, str_value)
+
 }
 
 func (self *Scanner) ScanTokens() []Token {
