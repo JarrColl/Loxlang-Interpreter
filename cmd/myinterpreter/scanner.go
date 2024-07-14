@@ -191,6 +191,18 @@ func (self *Scanner) scanToken() {
 		} else {
 			self.addToken(EQUAL)
 		}
+	case '<':
+		if self.matchCurrentChar('=') {
+			self.addToken(LESS_EQUAL)
+		} else {
+			self.addToken(LESS)
+		}
+	case '>':
+		if self.matchCurrentChar('=') {
+			self.addToken(GREATER_EQUAL)
+		} else {
+			self.addToken(GREATER)
+		}
 
 	default:
 		report_error(self.line, "Unexpected character: " + string(c))
