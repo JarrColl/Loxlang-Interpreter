@@ -217,6 +217,11 @@ func (self *Scanner) scanToken() {
 		} else {
 			self.addToken(SLASH)
 		}
+	case ' ':
+	case '\t':
+	case '\r':
+	case '\n':
+		self.line++
 
 	default:
 		report_error(self.line, "Unexpected character: " + string(c))
