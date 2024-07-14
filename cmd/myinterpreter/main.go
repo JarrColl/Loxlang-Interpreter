@@ -36,7 +36,7 @@ func report_error(line int, message string) {
 }
 
 func report(line int, where string, message string) {
-	fmt.Println("[line " + strconv.Itoa(line) + "] Error" + where + ": " + message);
+	fmt.Fprintln(os.Stderr, "[line " + strconv.Itoa(line) + "] Error" + where + ": " + message);
 	had_error = true;
 }
 
