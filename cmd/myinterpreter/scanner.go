@@ -172,6 +172,7 @@ func (self *Scanner) scanToken() {
 	case '*':
 		self.addToken(STAR)
 	default:
+		report_error(self.line, "Unexpected character: " + string(c))
 		// TODO: lex.error
 	}
 }

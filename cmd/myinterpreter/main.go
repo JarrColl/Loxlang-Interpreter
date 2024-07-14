@@ -3,7 +3,10 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 )
+
+var had_error = false
 
 func main() {
 	// You can use print statements as follows for debugging, they'll be visible when running tests.
@@ -22,6 +25,15 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Unknown command: %s\n", command)
 		os.Exit(1)
 	}
+}
+
+func report_error(line int, message string) {
+	report(line, "", message);
+}
+
+func report(line int, where string, message string) {
+	fmt.Println("[line " + strconv.Itoa(line) + "] Error" + where + ": " + message);
+	had_error = true;
 }
 
 func cmd_tokenise() {
