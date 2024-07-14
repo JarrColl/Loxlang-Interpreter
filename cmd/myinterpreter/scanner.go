@@ -147,6 +147,14 @@ func (self *Scanner) addTokenWithLexeme(t TokenType, lexeme string) {
 	self.tokens = append(self.tokens, Token{t, text, lexeme, self.line})
 }
 
+func (self *Scanner) matchCurrentChar(expected byte) bool {
+	if self.isAtEnd() {return false}
+	if self.source[self.current] != expected {return false}
+
+	self.incrementCurrent()
+	return true
+}
+
 func (self *Scanner) scanToken() {
 	var c byte = self.advance()
 
@@ -171,6 +179,13 @@ func (self *Scanner) scanToken() {
 		self.addToken(SEMICOLON)
 	case '*':
 		self.addToken(STAR)
+	case '=':
+		if self.matchCurrentChar('=') {
+			self.addToken(EQUAL_EQUAL)
+		} else {
+			self.addToken(EQUAL)
+		}
+
 	default:
 		report_error(self.line, "Unexpected character: " + string(c))
 		// TODO: lex.error
