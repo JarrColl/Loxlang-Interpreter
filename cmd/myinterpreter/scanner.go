@@ -117,12 +117,12 @@ type Token struct {
 func (self *Token) toString() string {
 	var output string = TokenTypeToString(self.token_type) + " " + self.lexeme
 
-	switch self.literal.(type) {
-	case float64:
-		return output + fmt.Sprintf(" %#g", self.literal)
-	default:
-		return output + fmt.Sprintf(" %v", self.literal)
-	}
+	// switch self.literal.(type) {
+	// case float64:
+	// 	return output + fmt.Sprintf(" %#g", self.literal)
+	// default:
+		return output + fmt.Sprintf(" %#v", self.literal)
+	// }
 }
 
 type Scanner struct {
