@@ -115,7 +115,14 @@ type Token struct {
 }
 
 func (self *Token) toString() string {
-	return TokenTypeToString(self.token_type) + " " + self.lexeme + fmt.Sprintf(" %v", self.literal)
+	var output string = TokenTypeToString(self.token_type) + " " + self.lexeme
+
+	switch self.literal.(type) {
+	case float64:
+		return output + fmt.Sprintf(" %f", self.literal)
+	default:
+		return output + fmt.Sprintf(" %v", self.literal)
+	}
 }
 
 type Scanner struct {
@@ -255,7 +262,7 @@ func (self *Scanner) numberFunc() {
 		self.advance()
 	}
 
-	if self.peekCurrent() == '.' && self.isDigit(self.peekNext()){
+	if self.peekCurrent() == '.' && self.isDigit(self.peekNext()) {
 		self.advance() // consume the "."
 
 		for self.isDigit(self.peekCurrent()) {
@@ -263,12 +270,12 @@ func (self *Scanner) numberFunc() {
 		}
 	}
 
-    // Parse float from string
+	// Parse float from string
 	if floatValue, err := strconv.ParseFloat(self.source[self.start:self.current], 64); err == nil {
 		self.addTokenWithLiteral(NUMBER, floatValue)
-    } else {
-        report_error(self.line, fmt.Sprintf("Error parsing float: %v", err))
-    }
+	} else {
+		report_error(self.line, fmt.Sprintf("Error parsing float: %v", err))
+	}
 }
 
 func (self *Scanner) isDigit(c byte) bool {
