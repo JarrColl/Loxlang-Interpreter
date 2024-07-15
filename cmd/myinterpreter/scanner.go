@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 type TokenType = int8
 
@@ -166,7 +169,13 @@ func (self *Scanner) peekCurrent() byte {
 		return 0
 	}
 	return self.source[self.current]
+}
 
+func (self *Scanner) peekNext() byte {
+	if (self.current + 1) >= len(self.source) {
+		return 0
+	}
+	return self.source[self.current+1]
 }
 
 func (self *Scanner) scanToken() {
@@ -232,9 +241,38 @@ func (self *Scanner) scanToken() {
 		self.line++
 	case '"':
 		self.stringFunc()
+	case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
+		self.numberFunc()
 	default:
 		report_error(self.line, "Unexpected character: "+string(c))
 	}
+}
+
+func (self *Scanner) numberFunc() {
+	self.start = self.current - 1
+
+	for self.isDigit(self.peekCurrent()) {
+		self.advance()
+	}
+
+	if self.peekCurrent() == '.' && self.isDigit(self.peekNext()){
+		self.advance() // consume the "."
+
+		for self.isDigit(self.peekCurrent()) {
+			self.advance()
+		}
+	}
+
+    // Parse float from string
+	if floatValue, err := strconv.ParseFloat(self.source[self.start:self.current], 64); err == nil {
+		self.addTokenWithLiteral(NUMBER, floatValue)
+    } else {
+        report_error(self.line, fmt.Sprintf("Error parsing float: %v", err))
+    }
+}
+
+func (self *Scanner) isDigit(c byte) bool {
+	return c >= '0' && c <= '9'
 }
 
 func (self *Scanner) stringFunc() {
@@ -251,7 +289,7 @@ func (self *Scanner) stringFunc() {
 
 	self.advance()
 
-	var str_value string = self.source[self.start+1 : self.current - 1]
+	var str_value string = self.source[self.start+1 : self.current-1]
 	self.addTokenWithLiteral(STRING, str_value)
 
 }
