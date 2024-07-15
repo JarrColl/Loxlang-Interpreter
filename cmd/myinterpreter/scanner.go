@@ -58,7 +58,7 @@ const (
 	EOF
 )
 
-var x = [39]string{
+var TokenTypeStrings = [39]string{
 	// Single-character tokens.
 	"LEFT_PAREN",
 	"RIGHT_PAREN",
@@ -104,8 +104,27 @@ var x = [39]string{
 	"EOF",
 }
 
+var Identifiers = map[string]TokenType{
+	"and":    AND,
+	"class":  CLASS,
+	"else":   ELSE,
+	"false":  FALSE,
+	"for":    FOR,
+	"fun":    FUN,
+	"if":     IF,
+	"nil":    NIL,
+	"or":     OR,
+	"print":  PRINT,
+	"return": RETURN,
+	"super":  SUPER,
+	"this":   THIS,
+	"true":   TRUE,
+	"var":    VAR,
+	"while":  WHILE,
+}
+
 func TokenTypeToString(token_type TokenType) string {
-	return x[token_type]
+	return TokenTypeStrings[token_type]
 }
 
 type Token struct {
@@ -192,6 +211,18 @@ func (self *Scanner) peekNext() byte {
 	return self.source[self.current+1]
 }
 
+func (self *Scanner) isDigit(c byte) bool {
+	return c >= '0' && c <= '9'
+}
+
+func (self *Scanner) isAlpha(c byte) bool {
+	return c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c == '_'
+}
+
+func (self *Scanner) isAlphaNumeric(c byte) bool {
+	return self.isAlpha(c) || self.isDigit(c)
+}
+
 func (self *Scanner) scanToken() {
 	var c byte = self.advance()
 
@@ -258,6 +289,9 @@ func (self *Scanner) scanToken() {
 	case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
 		self.numberFunc()
 	default:
+		if self.isAlpha(c) {
+			self.identifierFunc()
+		}
 		report_error(self.line, "Unexpected character: "+string(c))
 	}
 }
@@ -285,10 +319,6 @@ func (self *Scanner) numberFunc() {
 	}
 }
 
-func (self *Scanner) isDigit(c byte) bool {
-	return c >= '0' && c <= '9'
-}
-
 func (self *Scanner) stringFunc() {
 	// Set start to the first "
 	self.start = self.current - 1
@@ -306,6 +336,22 @@ func (self *Scanner) stringFunc() {
 	var str_value string = self.source[self.start+1 : self.current-1]
 	self.addTokenWithLiteral(STRING, str_value)
 
+}
+
+func (self *Scanner) identifierFunc() {
+	self.start = self.current
+	for self.isAlphaNumeric(self.peekCurrent()) {
+		self.advance()
+	}
+
+	text := self.source[self.start:self.current]
+	token_type, exists := Identifiers[text]
+
+	if exists {
+		self.addToken(token_type)
+	} else {
+		self.addToken(IDENTIFIER)
+	}
 }
 
 func (self *Scanner) ScanTokens() []Token {
