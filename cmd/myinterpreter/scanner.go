@@ -291,8 +291,9 @@ func (self *Scanner) scanToken() {
 	default:
 		if self.isAlpha(c) {
 			self.identifierFunc()
+		} else {
+			report_error(self.line, "Unexpected character: "+string(c))
 		}
-		report_error(self.line, "Unexpected character: "+string(c))
 	}
 }
 
@@ -339,7 +340,7 @@ func (self *Scanner) stringFunc() {
 }
 
 func (self *Scanner) identifierFunc() {
-	self.start = self.current
+	self.start = self.current - 1
 	for self.isAlphaNumeric(self.peekCurrent()) {
 		self.advance()
 	}
