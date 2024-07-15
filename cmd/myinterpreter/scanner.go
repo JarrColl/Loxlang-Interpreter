@@ -119,7 +119,7 @@ func (self *Token) toString() string {
 
 	switch self.literal.(type) {
 	case float64:
-		return output + fmt.Sprintf(" %f", self.literal)
+		return output + fmt.Sprintf(" %#f", self.literal)
 	default:
 		return output + fmt.Sprintf(" %v", self.literal)
 	}
