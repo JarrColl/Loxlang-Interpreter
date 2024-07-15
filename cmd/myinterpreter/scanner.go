@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 type TokenType = int8
@@ -117,12 +118,18 @@ type Token struct {
 func (self *Token) toString() string {
 	var output string = TokenTypeToString(self.token_type) + " " + self.lexeme
 
-	// switch self.literal.(type) {
-	// case float64:
-	// 	return output + fmt.Sprintf(" %#g", self.literal)
-	// default:
-		return output + fmt.Sprintf(" %#v", self.literal)
-	// }
+	switch self.literal.(type) {
+	case float64:
+		var decimal = fmt.Sprintf(" %.12f", self.literal)
+		decimal = strings.TrimRight(decimal, "0")
+
+		if decimal[len(decimal)-1] == '.' {
+			decimal = decimal + string('0')
+		}
+		return output + decimal
+	default:
+		return output + fmt.Sprintf(" %v", self.literal)
+	}
 }
 
 type Scanner struct {
