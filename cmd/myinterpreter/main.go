@@ -21,6 +21,17 @@ func main() {
 
 	if command == "tokenize" {
 		cmd_tokenise()
+	} else if command == "print" {
+		var expression Expr = Binary{
+			left: Unary{
+				operator: Token{token_type: MINUS, lexeme: "-", literal: "null", line: 1},
+				right:    Literal{123},
+			},
+			operator: Token{token_type: STAR, lexeme: "*", literal: "null", line: 1},
+			right:    Grouping{expression: Literal{value: 45.67}},
+		}
+
+		fmt.Println(AstPrint(expression))
 	} else {
 		fmt.Fprintf(os.Stderr, "Unknown command: %s\n", command)
 		os.Exit(1)
@@ -29,15 +40,16 @@ func main() {
 	if had_error {
 		os.Exit(65)
 	}
+
 }
 
 func report_error(line int, message string) {
-	report(line, "", message);
+	report(line, "", message)
 }
 
 func report(line int, where string, message string) {
-	fmt.Fprintln(os.Stderr, "[line " + strconv.Itoa(line) + "] Error" + where + ": " + message);
-	had_error = true;
+	fmt.Fprintln(os.Stderr, "[line "+strconv.Itoa(line)+"] Error"+where+": "+message)
+	had_error = true
 }
 
 func cmd_tokenise() {
