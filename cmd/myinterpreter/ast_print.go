@@ -5,7 +5,7 @@ import "fmt"
 func AstPrint(expr Expr) string {
 	switch typedExpr := expr.(type) {
 	case Literal:
-		// if expr.(Literal).value == nil return "nil"
+		if expr.(Literal).value == nil {return "nil"}
 		return fmt.Sprintf("%v", typedExpr.value)
 	case Unary:
 		return parenthesize(typedExpr.operator.lexeme, typedExpr.right)
@@ -31,35 +31,3 @@ func parenthesize(name string, exprs ...Expr) string {
 	return returnStr
 }
 
-
-
-
-
-
-
-
-/* type AstPrinterVisitor struct {}
-
-func (self *AstPrinterVisitor) Print(expr Expr) string {
-	return expr.accept(self)
-}
-
-func (self *AstPrinterVisitor) VisitForBinary(expr *Binary) string {
-	return self.parenthesize(expr.operator.lexeme, expr.left, expr.right)
-}
-
-func (self *AstPrinterVisitor) VisitForGrouping(expr *Grouping) string {
-
-}
-
-func (self *AstPrinterVisitor) VisitForLiteral(expr *Literal) string {
-
-}
-
-func (self *AstPrinterVisitor) VisitForUnary(expr *Unary) string {
-
-}
-
-func (self *AstPrinterVisitor) parenthesize(name string, exprs ...Expr) string {
-
-} */
