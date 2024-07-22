@@ -14,7 +14,7 @@ func AstPrint(expr Expr) string {
 
 		switch typedExpr.value.(type) {
 		case float64:
-			var decimal = fmt.Sprintf(" %.12f", typedExpr.value)
+			var decimal = fmt.Sprintf("%.12f", typedExpr.value)
 			decimal = strings.TrimRight(decimal, "0")
 
 			if decimal[len(decimal)-1] == '.' {
