@@ -20,7 +20,9 @@ func main() {
 	command := os.Args[1]
 
 	if command == "tokenize" {
-		cmdTokenise()
+		for _, token := range cmdTokenise() {
+			fmt.Println(token.toString())
+		}
 	} else if command == "parse" {
 		cmdParse()
 	} else if command == "print" {
@@ -74,10 +76,6 @@ func cmdTokenise() []Token {
 		scanner := NewScanner(string(fileContents))
 
 		scanner.ScanTokens()
-
-		// for _, token := range scanner.tokens {
-		// 	fmt.Println(token.toString())
-		// }
 
 		return scanner.tokens
 	} else {
