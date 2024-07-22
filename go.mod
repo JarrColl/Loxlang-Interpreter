@@ -6,6 +6,6 @@
 //
 // DON'T EDIT THIS!
 
-module github.com/codecrafters-io/interpreter-starter-go
+module github.com/JarrColl/Loxlang-Interpreter/tree/main
 
 go 1.22
