@@ -32,7 +32,7 @@ func AstPrint(expr Expr) string {
 		return parenthesize("group", typedExpr.expression)
 	default:
 		// TODO: error make this an actual error
-		return "error"
+		return ""
 	}
 }
 
