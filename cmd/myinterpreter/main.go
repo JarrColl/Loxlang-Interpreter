@@ -52,11 +52,11 @@ func ReportError(line int, message string) {
 }
 
 func ReportTokenError(token *Token, message string) {
-    if token.tokenType == EOF {
-      report(token.line, " at end", message);
-    } else {
-      report(token.line, " at '" + token.lexeme + "'", message);
-    }
+	if token.tokenType == EOF {
+		report(token.line, " at end", message)
+	} else {
+		report(token.line, " at '"+token.lexeme+"'", message)
+	}
 }
 
 func report(line int, where string, message string) {
