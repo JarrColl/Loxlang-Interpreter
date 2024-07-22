@@ -128,14 +128,14 @@ func TokenTypeToString(token_type TokenType) string {
 }
 
 type Token struct {
-	token_type TokenType
-	lexeme     string
-	literal    any
-	line       int
+	tokenType TokenType
+	lexeme    string
+	literal   any
+	line      int
 }
 
 func (self *Token) toString() string {
-	var output string = TokenTypeToString(self.token_type) + " " + self.lexeme
+	var output string = TokenTypeToString(self.tokenType) + " " + self.lexeme
 
 	switch self.literal.(type) {
 	case float64:
@@ -292,7 +292,7 @@ func (self *Scanner) scanToken() {
 		if self.isAlpha(c) {
 			self.identifierFunc()
 		} else {
-			report_error(self.line, "Unexpected character: "+string(c))
+			ReportError(self.line, "Unexpected character: "+string(c))
 		}
 	}
 }
@@ -316,7 +316,7 @@ func (self *Scanner) numberFunc() {
 	if floatValue, err := strconv.ParseFloat(self.source[self.start:self.current], 64); err == nil {
 		self.addTokenWithLiteral(NUMBER, floatValue)
 	} else {
-		report_error(self.line, fmt.Sprintf("Error parsing float: %v", err))
+		ReportError(self.line, fmt.Sprintf("Error parsing float: %v", err))
 	}
 }
 
@@ -328,7 +328,7 @@ func (self *Scanner) stringFunc() {
 	}
 
 	if self.isAtEnd() {
-		report_error(self.line, "Unterminated string.")
+		ReportError(self.line, "Unterminated string.")
 		return
 	}
 

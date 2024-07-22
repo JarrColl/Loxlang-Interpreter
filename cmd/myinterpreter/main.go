@@ -20,14 +20,16 @@ func main() {
 	command := os.Args[1]
 
 	if command == "tokenize" {
-		cmd_tokenise()
+		cmdTokenise()
+	} else if command == "parse" {
+		cmdParse()
 	} else if command == "print" {
 		var expression Expr = Binary{
 			left: Unary{
-				operator: Token{token_type: MINUS, lexeme: "-", literal: "null", line: 1},
+				operator: &Token{tokenType: MINUS, lexeme: "-", literal: "null", line: 1},
 				right:    Literal{123},
 			},
-			operator: Token{token_type: STAR, lexeme: "*", literal: "null", line: 1},
+			operator: &Token{tokenType: STAR, lexeme: "*", literal: "null", line: 1},
 			right:    Grouping{expression: Literal{value: 45.67}},
 		}
 
@@ -43,8 +45,16 @@ func main() {
 
 }
 
-func report_error(line int, message string) {
+func ReportError(line int, message string) {
 	report(line, "", message)
+}
+
+func ReportTokenError(token *Token, message string) {
+    if token.tokenType == EOF {
+      report(token.line, " at end", message);
+    } else {
+      report(token.line, " at '" + token.lexeme + "'", message);
+    }
 }
 
 func report(line int, where string, message string) {
@@ -52,7 +62,7 @@ func report(line int, where string, message string) {
 	had_error = true
 }
 
-func cmd_tokenise() {
+func cmdTokenise() []Token {
 	filename := os.Args[2]
 	fileContents, err := os.ReadFile(filename)
 	if err != nil {
@@ -65,10 +75,21 @@ func cmd_tokenise() {
 
 		scanner.ScanTokens()
 
-		for _, token := range scanner.tokens {
-			fmt.Println(token.toString())
-		}
+		// for _, token := range scanner.tokens {
+		// 	fmt.Println(token.toString())
+		// }
+
+		return scanner.tokens
 	} else {
 		fmt.Println("EOF  null") // Placeholder, remove this line when implementing the scanner
 	}
+
+	return nil //TODO: return error here
+}
+
+func cmdParse() {
+	parser := NewParser(cmdTokenise())
+	expr := parser.Parse()
+
+	fmt.Println(AstPrint(expr))
 }

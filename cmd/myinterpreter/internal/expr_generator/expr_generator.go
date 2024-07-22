@@ -7,10 +7,10 @@ import (
 )
 
 var expressions = [4][2]string{
-	{"Binary", "left Expr, operator Token, right Expr"},
+	{"Binary", "left Expr, operator *Token, right Expr"},
 	{"Grouping", "expression Expr"},
 	{"Literal", "value any"},
-	{"Unary", "operator Token, right Expr"},
+	{"Unary", "operator *Token, right Expr"},
 }
 
 func main() {
@@ -24,7 +24,6 @@ func main() {
 	f.WriteString("package main\n")
 	f.WriteString(`
 type Expr interface {
-	Accept(Visitor)
 }
 
 `)
@@ -36,16 +35,6 @@ type Expr interface {
 			f.WriteString("\n\t" + str_prop)
 		}
 		f.WriteString("\n}\n\n")
-
-		f.WriteString("func (self *" + expression[0] + ") Accept(visitor Visitor) {")
-		f.WriteString("\n\tvisitor.VisitFor" + expression[0] + "(self)")
-		f.WriteString("\n}\n\n")
 	}
-
-	f.WriteString("type Visitor interface {")
-	for _, expression := range expressions {
-		f.WriteString("\n\tVisitFor" + expression[0] + "(expr *" + expression[0] + ")")
-	}
-	f.WriteString("\n}\n\n")
 
 }

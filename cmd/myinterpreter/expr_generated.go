@@ -1,10 +1,11 @@
 package main
 
-type Expr interface {}
+type Expr interface {
+}
 
 type Binary struct {
 	left Expr
-	operator Token
+	operator *Token
 	right Expr
 }
 
@@ -17,6 +18,7 @@ type Literal struct {
 }
 
 type Unary struct {
-	operator Token
+	operator *Token
 	right Expr
 }
+
